@@ -1,0 +1,56 @@
+﻿@page "/catalog"
+@using MySuperShop.HttpApiClient
+@inject NavigationManager Navigation
+@inject IMyShopClient Client
+@* @inherits AppComponentBase *@
+
+
+<MudText Typo="Typo.h4" Align="Align.Center" Class="ma-20">Каталог товаров</MudText>
+<MudGrid Spacing="2" Justify="Justify.Center">
+	@if (_products is null){
+		<MudItem>
+			<MudText Typo="Typo.h6" Align="Align.Center" Class="ma-20">Страница загружается</MudText>
+		</MudItem>}
+	else
+	{
+		@foreach (var product in _products)
+		{
+		<MudItem>
+			<MudCard Class="mud-info">
+				<ProductItem Product="product" />
+				<MudCardActions>
+			        <MudButton OnClick="async () => await DeleteProduct(product)"  Variant="Variant.Text" Color="Color.Secondary">DELETE</MudButton>
+			        <MudButton OnClick="() => NavToProductCard(product.Id)" Variant="Variant.Text" Color="Color.Warning">INFO</MudButton>
+			        <MudButton OnClick="() => AddProductToCart(product)" Variant="Variant.Text" Color="Color.Success">CART</MudButton>
+				</MudCardActions>
+			</MudCard>
+		</MudItem>
+		}
+	}
+</MudGrid>
+	<MudDivider DividerType="DividerType.Middle" Class="my-6"/>
+<MudItem Typo="Typo.h4" Align="Align.Center" Class="ma-20">
+	<MudButton OnClick="CreateProduct" Variant="Variant.Text" Color="Color.Dark">CREATE NEW PRODUCT</MudButton>
+</MudItem>
+<MudPopover Open="@_editPopoverIsOpen" Fixed="true" Class="px-8 pt-8">
+	<MudTextField T="string" Typo="Typo.h3" Class="mb-4" @bind-Value="_name" Label="Наименование"/>
+	<MudTextField T="string" Typo="Typo.h3" Class="mb-4" @bind-Value="_pic" Label="Путь к фото"/>
+	<MudTextField T="string" Typo="Typo.h3" Class="mb-4" @bind-Value="_description" Label="Описание"/>
+	<MudNumericField HideSpinButtons="true" @bind-Value="_price" Label="Цена, руб" Variant="Variant.Text" />
+	<MudNumericField HideSpinButtons="true" @bind-Value="_stock" Label="Количество" Variant="Variant.Text" />
+	<MudDivider DividerType="DividerType.Middle" Class="my-6"/>
+	<MudToolBar>
+		<MudFab OnClick="CloseEditPopover" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Cancel"/>
+		<MudSpacer />
+		<MudFab OnClick="SaveAndCloseEditPopover" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Save"/>
+	</MudToolBar>
+</MudPopover>
+<MudPopover Open="@_quantityInputPopoverIsOpen" Fixed="true" Class="px-8 pt-8">
+	<MudTextField T="double" Typo="Typo.h3" Class="mb-4" @bind-Value="_quantity" Label="Количество"/>
+	<MudDivider DividerType="DividerType.Middle" Class="my-6"/>
+	<MudToolBar>
+		<MudFab OnClick="ClosQuantityInputPopover" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Cancel"/>
+		<MudSpacer />
+		<MudFab OnClick="ConfirmAndCloseQuantityInputPopover" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Save"/>
+	</MudToolBar>
+</MudPopover>

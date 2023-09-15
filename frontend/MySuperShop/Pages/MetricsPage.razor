@@ -1,0 +1,51 @@
+﻿@page "/metrics"
+<h3>MetricsPage</h3>
+@using MySuperShop.HttpApiClient
+@using System.Security.Cryptography
+@using System.Collections.ObjectModel
+@inject IMyShopClient Client
+@* @inherits AppComponentBase *@
+
+<MudTable Items="@_elements" Hover="true" Breakpoint="Breakpoint.Sm">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Page</MudTh>
+        <MudTh>Count</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.PageName</MudTd>
+        <MudTd DataLabel="Name">@context.Count</MudTd>
+    </RowTemplate>
+</MudTable>
+@code {
+    private ObservableCollection<TransitionRecord> _elements = new ObservableCollection<TransitionRecord>();
+    private CancellationTokenSource _cts = new(); 
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCounter();
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    void Dispose()
+    {
+    // Выполнится в момент закрытия/переключения страницы
+        _cts.Cancel();
+    }
+
+    private async Task GetCounter()
+    {
+        var records = await Client.GetMetrics(_cts.Token);
+
+        int number = 0;
+        foreach (var rec in records)
+        {
+            _elements.Add(new TransitionRecord(number, rec.Key, rec.Value));
+            ++number;
+        }
+    }
+
+    private record TransitionRecord(int Number, string PageName, int Count);
+}
+

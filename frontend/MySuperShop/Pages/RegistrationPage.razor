@@ -1,0 +1,37 @@
+﻿@page "/registration"
+@using MySuperShop.HttpApiClient
+@inject IMyShopClient Client
+@inject NavigationManager NavigationManager
+@inherits AppComponentBase
+
+<h3>Регистрация</h3>
+
+
+<EditForm Model="@_model" OnValidSubmit="ProcessRegistration">
+<DataAnnotationsValidator/>
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="First name" HelperText="Max. 8 characters"
+                              @bind-Value="_model.Name" For="@(() => _model.Name)"/>
+                <MudTextField Label="Email" Class="mt-3"
+                              @bind-Value="_model.Email" For="@(() => _model.Email)"/>
+                <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                              @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password"/>
+                <MudTextField Label="Password" HelperText="Repeat the password" Class="mt-3"
+                              @bind-Value="_model.ConfirmedPassword" For="@(() => _model.ConfirmedPassword)" InputType="InputType.Password"/>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Регистрация</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12">
+        @if (_registrationInProgress)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        }
+    </MudItem>
+</MudGrid>
+</EditForm>

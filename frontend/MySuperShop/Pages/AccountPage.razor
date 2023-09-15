@@ -1,0 +1,58 @@
+﻿@page "/account/current"
+@using MySuperShop.HttpApiClient
+@using MySuperShop.HttpApiClient.Exceptions
+@inject IMyShopClient Client
+@* @inherits AppComponentBase *@
+
+<h3>Информация об аккаунте</h3>
+
+
+<EditForm Model="@_email" >
+    <DataAnnotationsValidator/>
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="First name" ReadOnly="true"
+                                  @bind-Value="@_firstName"/>
+                    <MudTextField Label="Email" Class="mt-3" ReadOnly="true"
+                                  @bind-Value="@_email"/>
+                    <MudTextField Label="Roles" Class="mt-3" ReadOnly="true"
+                                  @bind-Value="_roles"/>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+@code {
+    [Inject] private IDialogService DialogService { get; set; }
+    private string _firstName = "";
+    private string _email = "";
+    private string _roles = "";
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var resp = await Client.GetCurrentAccount();
+            _firstName = resp.Name;
+            _email = resp.Email;
+            _roles = resp.Roles;
+        }
+        catch (MySuperShopApiException ex)
+        {
+            await DialogService.ShowMessageBox(
+                "Ошибка!",
+                $"Ошибка авторизации: {ex.Message}");
+        }
+        catch (Exception exception)
+        {
+            await DialogService.ShowMessageBox(
+                "Ошибка!",
+                $"Ошибка авторизации: {exception.Message}");
+        }
+    }
+    
+    
+}

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFramework>net7.0</TargetFramework>
+    <RootNamespace>MyShopBackend</RootNamespace>
+    <UserSecretsId>93272117-2861-4e2c-99ee-8988e7981777</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.6.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.9" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.0-preview2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\MySuperShop.IdentityPasswordHasherLib\MySuperShop.IdentityPasswordHasherLib.csproj" />
+    <ProjectReference Include="..\MySuperShop.Data.EntityFramework\MySuperShop.Data.EntityFramework.csproj" />
+    <ProjectReference Include="..\MySuperShop.Domain\MySuperShop.Domain.csproj" />
+    <ProjectReference Include="..\..\shared\MySuperShop.HttpModels\MySuperShop.HttpModels.csproj" />
+    <ProjectReference Include="..\MySuperShop.EmailSender.Beget\MySuperShop.EmailSender.Beget.csproj" />
+    <ProjectReference Include="..\MySuperShop.IdentityPasswordHasherLib\MySuperShop.IdentityPasswordHasherLib.csproj" />
+  </ItemGroup>
+
+</Project>

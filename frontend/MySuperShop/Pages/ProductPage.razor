@@ -1,0 +1,84 @@
+﻿@page "/products/{ProductId:guid}"
+@using MySuperShop.HttpApiClient
+@inject IMyShopClient Client
+@* @inherits AppComponentBase *@
+
+<MudGrid>
+    @if (_product is null)
+    {
+        <MudItem>
+            <MudText Typo="Typo.h6" Align="Align.Center" Class="ma-20">Товар загружается</MudText>
+        </MudItem>
+    }
+    else
+    {
+        <MudItem md="12" sm="12">
+            <MudText Typo="Typo.h3">@_product.Name</MudText>
+        </MudItem>
+        <MudItem lg="4" md="6" sm="12">
+            <img width="300" src="@_product.Pic" alt="@_product.Name"/>
+        </MudItem>
+        <MudItem lg="4" md="6" sm="12">
+            <MudPaper Class="pa-4">
+                <MudText Typo="Typo.h4" Class="mb-4">Цена: @String.Format("{0:0.00}", _product.Price) &#8381</MudText>
+                <MudText Typo="Typo.body1" Class="mb-4"><strong>Описание: </strong>@_product.Description</MudText>
+                <MudText Typo="Typo.body1" Class="mb-4"><strong>Доступно: </strong>@_product.Stock</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem lg="4" md="12" sm="12">
+            <MudButton OnClick="ShowEditPopover" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Update" Color="Color.Warning" Size="Size.Large">Edit</MudButton>
+        </MudItem>
+        <MudPopover Open="@_editPopoverIsOpen" Fixed="true" Class="px-8 pt-8">
+            <MudTextField T="string" Typo="Typo.h3" Class="mb-4" @bind-Value="_product.Name" Label="Наименование"/>
+            <MudTextField T="string" Typo="Typo.h3" Class="mb-4" @bind-Value="_product.Pic" Label="Путь к фото"/>
+            <MudTextField T="string" Typo="Typo.h3" Class="mb-4" @bind-Value="_product.Description" Label="Описание"/>
+            <MudNumericField HideSpinButtons="true" @bind-Value="_product.Price" Label="Цена, руб" Variant="Variant.Text" />
+            <MudNumericField HideSpinButtons="true" @bind-Value="_product.Stock" Label="Количество" Variant="Variant.Text" />
+        <MudDivider DividerType="DividerType.Middle" Class="my-6"/>
+        <MudToolBar>
+            <MudFab OnClick="CloseEditPopover" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Cancel"/>
+            <MudSpacer />
+            <MudFab OnClick="SaveAndCloseEditPopover" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Save"/>
+        </MudToolBar>
+        </MudPopover>
+        <MudOverlay @bind-Visible="_editPopoverIsOpen" DarkBackground="true"/>
+    }
+</MudGrid>
+
+
+@code {
+    [Parameter]
+    public Guid ProductId { get; set; }
+    private Product? _product;
+    private bool _editPopoverIsOpen = false;
+
+    protected override async Task OnInitializedAsync()
+    { 
+        await base.OnInitializedAsync();
+        await UpdateProductInfo();
+    }
+
+    private void ShowEditPopover()
+    {
+        _editPopoverIsOpen = true;
+    }
+
+    private async Task CloseEditPopover()
+    {
+        _editPopoverIsOpen = false;
+        await UpdateProductInfo();
+    }
+    
+    private async Task UpdateProductInfo()
+    {
+        _product = await Client.GetProduct(ProductId);
+        await InvokeAsync(() => StateHasChanged());
+    }
+
+    private async Task SaveAndCloseEditPopover()
+    {
+        if (_product is not null)
+            await Client.UpdateProduct(_product);
+        await CloseEditPopover();
+    }
+}

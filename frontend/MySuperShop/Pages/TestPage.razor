@@ -1,0 +1,208 @@
+﻿@page "/testPage"
+@using System.Runtime.InteropServices
+@using System.Globalization
+@using MySuperShop.HttpApiClient
+@inject IMyShopClient Client
+
+<MudText Typo="Typo.h4" Justify="Justify.Center" Align="Align.Center">TestPage</MudText>
+
+<MudDivider DividerType="DividerType.Inset" />
+
+<MudGrid Spacing="4" Justify="Justify.Center">
+    <MudItem>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick=GetProducts>Get all</MudButton>
+    </MudItem>
+    <MudItem>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GetProductById">Get by id</MudButton>
+    </MudItem>
+    <MudItem>
+        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="AddProduct">Add</MudButton>
+    </MudItem>
+    <MudItem>
+        <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="UpdateProduct">Update</MudButton>
+    </MudItem>
+    <MudItem>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteProduct">Delete</MudButton>
+    </MudItem>
+</MudGrid>
+
+<MudDivider DividerType="DividerType.Inset" />
+<MudTextField @bind-Value="GuidValue" Label="Guid" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+<MudDivider DividerType="DividerType.Inset" />
+<MudTextField @bind-Value="NewNameValue" Label="Name" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+<MudDivider DividerType="DividerType.Inset" />
+<MudTextField @bind-Value="NewPriceValue" Label="Price" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+<MudDivider DividerType="DividerType.Inset" />
+<MudTextField T="string" Label="Output Info" Variant="Variant.Outlined" @bind-Value="RecievedData" Lines="20" />
+<MudDivider DividerType="DividerType.Inset" />
+
+
+@code {
+
+    private string GuidValue { get; set; } = "";
+    private string NewNameValue { get; set; } = "";
+    private string NewPriceValue { get; set; } = "";
+    private string RecievedData { get; set; } = "";
+
+    private async void GetProducts()
+    {
+        var products = await Client.GetProducts();
+        if (products.Length == 0)
+        {
+            RecievedData = "No items found";
+        }
+        else
+        {
+            var outputStr = "";
+            foreach (var product in products)
+            {
+                outputStr += GetProductShortInfo(product);
+            }
+            RecievedData = outputStr;
+            await InvokeAsync(() => StateHasChanged());
+        }
+    }
+
+    private async void GetProductById()
+    {
+        RecievedData = string.Empty;
+        await InvokeAsync(() => StateHasChanged());
+        if (Guid.TryParse(GuidValue, out var testGuid))
+        {
+            try
+            {
+                var product = await Client.GetProduct(testGuid);
+                RecievedData = GetProductShortInfo(product);
+                await InvokeAsync(() => StateHasChanged());
+            }
+            catch (Exception ex)
+            {
+                RecievedData = "Guid not found or another error:\n" + ex;
+                await InvokeAsync(() => StateHasChanged());
+            }
+        }
+        else
+        {
+            RecievedData = "Bad quality of Guid";
+            await InvokeAsync(() => StateHasChanged());
+        }
+    }
+
+    private async void AddProduct()
+    {
+        RecievedData = string.Empty;
+        await InvokeAsync(() => StateHasChanged());
+        if (NewNameValue == String.Empty)
+        {
+            RecievedData = "Please fill Name first!";
+            await InvokeAsync(() => StateHasChanged());
+            return;
+        }
+        if (NewPriceValue == String.Empty)
+        {
+            RecievedData = "Please fill Price first!";
+            await InvokeAsync(() => StateHasChanged());
+            return;
+        }
+        if (Decimal.TryParse(NewPriceValue, out var newPrice))
+        {
+            Product product = new Product(Guid.NewGuid(), NewNameValue, newPrice);
+            product.Description = product.Name + "Описание";
+            product.Stock = 5;
+            product.Pic = "";
+            try
+            {
+                await Client.AddProduct(product);
+                RecievedData = "Product added successfully!";
+                await InvokeAsync(() => StateHasChanged());
+            }
+            catch (Exception ex)
+            {
+                RecievedData = "Guid not found or another error:\n" + ex;
+                await InvokeAsync(() => StateHasChanged());
+            }
+        }
+        else
+        {
+            RecievedData = "Wrong format of price!";
+            await InvokeAsync(() => StateHasChanged());
+        }
+    }
+
+    private async void UpdateProduct()
+    {
+        RecievedData = string.Empty;
+        await InvokeAsync(() => StateHasChanged());
+        
+        if (NewNameValue == String.Empty)
+        {
+            RecievedData = "Please fill Name first!";
+            await InvokeAsync(() => StateHasChanged());
+            return;
+        }
+        if (NewPriceValue == String.Empty)
+        {
+            RecievedData = "Please fill Price first!";
+            await InvokeAsync(() => StateHasChanged());
+            return;
+        }
+
+        if (!Decimal.TryParse(NewPriceValue, out var newPrice))
+        {
+            RecievedData = "Wrong format of price";
+            await InvokeAsync(() => StateHasChanged());
+        }
+        if (Guid.TryParse(GuidValue, out var testGuid))
+        {
+            Product product = new Product(testGuid, NewNameValue, newPrice);
+            product.Description = product.Name + "Описание";
+            product.Stock = 5;
+            try
+            {
+                await Client.UpdateProduct(product);
+                RecievedData = "Product updated successfully!";
+                await InvokeAsync(() => StateHasChanged());
+            }
+            catch (Exception ex)
+            {
+                RecievedData = "Guid not found or another error:\n" + ex;
+                await InvokeAsync(() => StateHasChanged());
+            }
+        }
+        else
+        {
+            RecievedData = "Bad quality of Guid";
+            await InvokeAsync(() => StateHasChanged());
+        }
+    }
+
+    private async void DeleteProduct()
+    {
+        RecievedData = string.Empty;
+        await InvokeAsync(() => StateHasChanged());
+        
+        if (Guid.TryParse(GuidValue, out var testGuid))
+        {
+            Product product = new Product(testGuid, "123", 0);
+            await Client.DeleteProduct(product);
+            RecievedData = "Product deleted successfully!";
+            await InvokeAsync(() => StateHasChanged());
+        }
+        else
+        {
+            RecievedData = "Bad quality of Guid";
+            await InvokeAsync(() => StateHasChanged());
+        }
+    }
+    
+    
+    
+    
+    
+    
+    private string GetProductShortInfo(Product product)
+    {
+        return "\nId: " + product.Id.ToString() + "\nName: " + product.Name;
+    }
+
+}

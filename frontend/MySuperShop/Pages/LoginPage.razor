@@ -1,0 +1,33 @@
+﻿@page "/login"
+@using MySuperShop.HttpApiClient
+@inject IMyShopClient Client
+@inject NavigationManager NavigationManager
+@inherits AppComponentBase
+
+<h3>Вход в аккаунт</h3>
+
+
+<EditForm Model="@_model" OnValidSubmit="ProcessRegistration">
+<DataAnnotationsValidator/>
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Email" Class="mt-3"
+                              @bind-Value="_model.Email" For="@(() => _model.Email)"/>
+                <MudTextField Label="Password" HelperText="Введите пароль" Class="mt-3"
+                              @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password"/>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Вход в аккаунт</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12">
+        @if (_loginInProgress)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        }
+    </MudItem>
+</MudGrid>
+</EditForm>

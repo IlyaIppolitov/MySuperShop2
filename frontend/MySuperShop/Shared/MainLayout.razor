@@ -1,0 +1,71 @@
+﻿@using Blazored.LocalStorage
+@using MySuperShop.HttpApiClient
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="0">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudSpacer />
+        <MudButton 
+            OnClick= "UserLogout"
+            Variant="Variant.Filled"
+            EndIcon="@Icons.Material.Filled.Logout"
+            Color="Color.Primary">
+            LogOut
+        </MudButton>
+        <MudButton 
+            OnClick= "() => Navigation.NavigateTo(_loginPageName)"
+            Variant="Variant.Filled"
+            EndIcon="@Icons.Material.Filled.Login"
+            Color="Color.Primary">
+            LogIn
+        </MudButton>
+        <MudButton 
+            OnClick= "() => Navigation.NavigateTo(_registrationPageName)"
+            Variant="Variant.Filled"
+            EndIcon="@Icons.Material.Filled.PersonAdd"
+            Color="Color.Primary">
+            Registration
+        </MudButton>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">MySuperShop</MudText>
+        </MudDrawerHeader>
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large" Class="my-16 pt-16">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    
+    [Inject] protected ILocalStorageService LocalStorage { get; private set; }
+    [Inject] protected AppState State { get; private set; }
+    bool _drawerOpen = true;
+    private readonly string _registrationPageName = "/registration";
+    private readonly string _loginPageName = "/login";
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    void UserLogout()
+    {
+        if (!State.IsTokenChecked) 
+            return;
+        LocalStorage.RemoveItemAsync("token");
+        State.IsTokenChecked = false;
+        Navigation.NavigateTo("/");
+    }
+}

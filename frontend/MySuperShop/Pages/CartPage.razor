@@ -1,0 +1,47 @@
+﻿@page "/cart/current"
+@using MySuperShop.HttpApiClient
+@using MySuperShop.HttpApiClient.Exceptions
+@using MySuperShop.HttpModels.Responses
+@inject IMyShopClient Client
+@inherits AppComponentBase
+
+<MudTable Items="@_elements" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_isLoading" LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        <MudTh>Наименование</MudTh>
+        <MudTh>Количество</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Product">@context.ProductName</MudTd>
+        <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
+    </RowTemplate>
+</MudTable>
+@code {
+    [Inject] private IDialogService DialogService { get; set; }
+    private IEnumerable<ItemResponse> _elements = new List<ItemResponse>();
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        
+        try
+        {
+            _isLoading = true;
+            var response = await Client.GetCart();
+            _elements = response.Items;
+            _isLoading = false;
+        }
+        catch (MySuperShopApiException ex)
+        {
+            await DialogService.ShowMessageBox(
+                "Ошибка!",
+                $"Ошибка авторизации: {ex.Message}");
+        }
+        catch (Exception exception)
+        {
+            await DialogService.ShowMessageBox(
+                "Ошибка!",
+                $"Ошибка авторизации: {exception.Message}");
+        }
+    }
+}
