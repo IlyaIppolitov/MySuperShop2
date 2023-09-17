@@ -40,6 +40,7 @@ namespace MySuperShop.HttpApiClient
             {
                 _httpClient.BaseAddress = hostUri;
             }
+            _httpClient.DefaultRequestHeaders.Add("Api-Key", "superToken");
         }
 
         public void Dispose()

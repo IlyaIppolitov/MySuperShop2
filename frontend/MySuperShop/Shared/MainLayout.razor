@@ -60,11 +60,10 @@
         _drawerOpen = !_drawerOpen;
     }
 
-    void UserLogout()
+    async Task UserLogout()
     {
-        if (!State.IsTokenChecked) 
-            return;
-        LocalStorage.RemoveItemAsync("token");
+        if(await LocalStorage.ContainKeyAsync("token"))
+            await LocalStorage.RemoveItemAsync("token");
         State.IsTokenChecked = false;
         Navigation.NavigateTo("/");
     }

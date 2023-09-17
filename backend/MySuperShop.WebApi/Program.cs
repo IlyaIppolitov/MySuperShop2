@@ -13,9 +13,11 @@ using MyShopBackend.Middleware;
 using MyShopBackend.Services;
 using MySuperShop.Data.EntityFramework;
 using MySuperShop.Data.EntityFramework.Repositories;
+using MySuperShop.Domain.Events;
 using MySuperShop.Domain.Repositories;
 using MySuperShop.Domain.Services;
 using MySuperShop.EmailSender.Beget;
+using MySuperShop.EmailSender.NotiSend;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +39,8 @@ builder.Services.AddDbContext<AppDbContext>(
 
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add<CentralizedExceptionHandlingFilter>(order: 0);
+    options.Filters.Add<CentralizedExceptionHandlingFilter>(order: 1);
+    options.Filters.Add<AuthentificationRequestFilter>(order: 0);
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -46,9 +49,13 @@ builder.Services.AddSwaggerGen();
 // ���������� CORS � builder
 builder.Services.AddCors();
 
-// Подключение smtpConfig, настраемого из файла конфигураций json
+// Подключение Config, настраемого из файла конфигураций json пользовательских секретов
 builder.Services.AddOptions<SmtpConfig>()
     .BindConfiguration("SmtpConfig")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+builder.Services.AddOptions<NotiSendConfig>()
+    .BindConfiguration("NotiSendConfig")
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
@@ -63,7 +70,12 @@ builder.Services.AddSingleton<IApplicationPasswordHasher, IdentityPasswordHasher
 builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddScoped<IConfirmationCodeRepository, ConfirmationCodeRepositoryEf>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWorkEf>();
-builder.Services.AddScoped<IEmailSender, MailKitSmtpEmailSender>(); 
+builder.Services.AddScoped<IEmailSender, MailKitSmtpEmailSender>();
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblies(typeof(AccountRegistered).Assembly);
+    cfg.RegisterServicesFromAssemblies(typeof(LoginConfirmationCodeSent).Assembly);
+});
 
 //Логирование всех запросов и ответов
 builder.Services.AddHttpLogging(options => //настройка

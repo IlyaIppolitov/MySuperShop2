@@ -4,6 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>MySuperShop.EmailSender.Beget</RootNamespace>
+        <UserSecretsId>115fee40-c960-4206-8917-a9755cbc55b4</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>

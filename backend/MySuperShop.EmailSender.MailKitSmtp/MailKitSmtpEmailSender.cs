@@ -46,7 +46,7 @@ public class MailKitSmtpEmailSender : IEmailSender, IAsyncDisposable
             To = { MailboxAddress.Parse(recepientEmail) },
         };
 
-        _logger.LogInformation($"Email sent from with password: {body}");
+        _logger.LogInformation($"Email sent from with body: {body}");
         await EnsureConnectedAndAuthentificatedAsync();
         await _smtpClient.SendAsync(emailMessage, cancellationToken);
     }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace MyShopBackend.Filters;
 
-public class AuthentificationRequestFilter : IAuthorizationFilter
+public class AuthentificationRequestFilter : Attribute, IAuthorizationFilter
 {
     private readonly ILogger<AuthentificationRequestFilter> _logger;
 
@@ -16,6 +16,15 @@ public class AuthentificationRequestFilter : IAuthorizationFilter
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        throw new NotImplementedException();
+        var token = context.HttpContext.Request.Headers["Api-Key"].ToString();
+
+        if (string.IsNullOrEmpty(token) || token != "superToken")
+        {
+            _logger.LogInformation("Wrong API-KEY during Authorization");
+            context.Result = 
+                new StatusCodeResult(StatusCodes.Status401Unauthorized);
+            return;
+        }
+        _logger.LogInformation("Success confirmation of API-KEY");
     }
 }

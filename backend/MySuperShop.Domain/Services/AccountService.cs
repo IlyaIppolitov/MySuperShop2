@@ -1,6 +1,8 @@
 ﻿using System.CodeDom.Compiler;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using MySuperShop.Domain.Entities;
+using MySuperShop.Domain.Events;
 using MySuperShop.Domain.Exceptions;
 using MySuperShop.Domain.Repositories;
 
@@ -12,18 +14,18 @@ public class AccountService
     private readonly IApplicationPasswordHasher _hasher;
     private readonly ILogger<AccountService> _logger;
     private readonly IUnitOfWork _uow;
-    private readonly IEmailSender _emailSender;
+    private readonly IMediator _mediator;
 
     public AccountService(
         IApplicationPasswordHasher hasher,
         IUnitOfWork uow,
-        ILogger<AccountService> logger, 
-        IEmailSender emailSender)
+        ILogger<AccountService> logger,
+        IMediator mediator)
     {
         _uow = uow ?? throw new ArgumentNullException(nameof(uow));
         _hasher = hasher ?? throw new ArgumentNullException(nameof(hasher));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
+        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
     
     public virtual async Task Register(
@@ -48,6 +50,8 @@ public class AccountService
         await _uow.CartRepository.Add(cart, cancellationToken);
         await _uow.SaveChangesAsync(cancellationToken);
         
+        // Сигнализируем событие о регистрации
+        await _mediator.Publish(new AccountRegistered(account, DateTime.UtcNow), cancellationToken);
     }
 
     private string EncryptPassword(string request)
@@ -89,14 +93,11 @@ public class AccountService
         if (account.Email == null) throw new ArgumentNullException(nameof(account));
         var code = GeneraNewConfirmationCode(account);
         await _uow.ConfirmationCodeRepository.Add(code, cancellationToken);
-        
-        _logger.LogInformation($"Email sent from with password: {code.Code}");
-        // await _emailSender.SendEmailAsync(
-        //     account.Email,
-        //     "Подтверждение входа",
-        //     code.Code, cancellationToken);
-            
         await _uow.SaveChangesAsync(cancellationToken);
+        
+        // Сигнализируем событии о регистрации
+        await _mediator.Publish(new LoginConfirmationCodeSent(account, code), cancellationToken);
+        
         return code;
     }
 

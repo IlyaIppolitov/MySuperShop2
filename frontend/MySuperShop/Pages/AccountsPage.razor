@@ -4,7 +4,7 @@
 @using SQLitePCL
 @inject IMyShopClient Client
 @inject ISnackbar Snackbar
-@* @inherits AppComponentBase *@
+@inherits AppComponentBase
 
 <MudTable Items="@Accounts" Dense="false" Hover="true" ReadOnly="@_ronly" CanCancelEdit="@true" Filter="new Func<Account,bool>(FilterFunc)"
           @bind-SelectedItem="_selectedItem1" SortLabel="Sort By" CommitEditTooltip="Commit Edit"

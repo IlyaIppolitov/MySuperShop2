@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>MyShopBackend</RootNamespace>
-    <UserSecretsId>93272117-2861-4e2c-99ee-8988e7981777</UserSecretsId>
+    <UserSecretsId>fc666071-a20e-47f4-b9c8-ea0bbb470c3c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,7 +28,8 @@
     <ProjectReference Include="..\MySuperShop.Data.EntityFramework\MySuperShop.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\MySuperShop.Domain\MySuperShop.Domain.csproj" />
     <ProjectReference Include="..\..\shared\MySuperShop.HttpModels\MySuperShop.HttpModels.csproj" />
-    <ProjectReference Include="..\MySuperShop.EmailSender.Beget\MySuperShop.EmailSender.Beget.csproj" />
+    <ProjectReference Include="..\MySuperShop.EmailSender.MailKitSmtp\MySuperShop.EmailSender.MailKitSmtp.csproj" />
+    <ProjectReference Include="..\MySuperShop.EmailSender.NotiSend\MySuperShop.EmailSender.NotiSend.csproj" />
     <ProjectReference Include="..\MySuperShop.IdentityPasswordHasherLib\MySuperShop.IdentityPasswordHasherLib.csproj" />
   </ItemGroup>
 
