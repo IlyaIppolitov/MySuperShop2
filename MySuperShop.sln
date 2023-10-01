@@ -31,6 +31,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySuperShop.EmailSender.Mai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySuperShop.EmailSender.NotiSend", "backend\MySuperShop.EmailSender.NotiSend\MySuperShop.EmailSender.NotiSend.csproj", "{0AAF7B62-D5CD-4E3F-950F-D66A13E4D049}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0FEEB87F-246F-423F-9A3F-40212D4009D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySuperShop.Domain.Test", "tests\MySuperShop.Domain.Test\MySuperShop.Domain.Test.csproj", "{D9BFA736-CF92-4E0E-BE37-C7CAF18140EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +77,10 @@ Global
 		{0AAF7B62-D5CD-4E3F-950F-D66A13E4D049}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AAF7B62-D5CD-4E3F-950F-D66A13E4D049}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AAF7B62-D5CD-4E3F-950F-D66A13E4D049}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9BFA736-CF92-4E0E-BE37-C7CAF18140EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9BFA736-CF92-4E0E-BE37-C7CAF18140EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9BFA736-CF92-4E0E-BE37-C7CAF18140EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9BFA736-CF92-4E0E-BE37-C7CAF18140EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,5 +100,6 @@ Global
 		{01133CA1-B18C-41BB-8BDC-0268DFCA6CA0} = {E18274EC-357B-46A9-B3D0-1FA690160042}
 		{06D4860B-C5AC-4D26-B53D-4C5559B67C86} = {E29FD5B2-B2C1-4BF2-B75E-610EE7DAC7BE}
 		{0AAF7B62-D5CD-4E3F-950F-D66A13E4D049} = {E29FD5B2-B2C1-4BF2-B75E-610EE7DAC7BE}
+		{D9BFA736-CF92-4E0E-BE37-C7CAF18140EA} = {0FEEB87F-246F-423F-9A3F-40212D4009D1}
 	EndGlobalSection
 EndGlobal

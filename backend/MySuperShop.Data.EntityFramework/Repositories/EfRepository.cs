@@ -21,7 +21,16 @@ public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class,
         => await Entities.FirstAsync(it => it.Id == id, cancellationToken);
 
     public virtual async Task<IReadOnlyList<TEntity>> GetAll(CancellationToken cancellationToken)
-        => await Entities.ToListAsync(cancellationToken);
+    {
+        var aaa = Entities.Where(p => p.Id == p.Id);
+        foreach (var bbb in aaa)
+        {
+            Console.WriteLine(bbb.Id);
+        }
+    
+        return await aaa.ToListAsync(cancellationToken);
+    }
+    // => await Entities.ToListAsync(cancellationToken);
     
     public virtual async Task Add(TEntity entity, CancellationToken cancellationToken)
     {
@@ -29,6 +38,7 @@ public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class,
             throw new ArgumentNullException(nameof(entity));
         
         await Entities.AddAsync(entity, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
     
     public virtual async Task Update(TEntity entity, CancellationToken cancellationToken)
