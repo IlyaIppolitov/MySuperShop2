@@ -11,7 +11,7 @@ public class Account : IEntity
     private Role[]? _roles;
     
 
-    public Account()
+    protected Account()
     {
     }
 
