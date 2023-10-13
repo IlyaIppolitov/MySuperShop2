@@ -4,7 +4,7 @@ using MySuperShop.Domain.Services;
 
 namespace MySuperShop.Data.EntityFramework
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : DbContext, IAppDbContext
     {
         public DbSet<Product> Products => Set<Product>();
         public DbSet<Account> Accounts => Set<Account>();
